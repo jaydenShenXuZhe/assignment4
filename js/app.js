@@ -1,51 +1,41 @@
 $(document).ready(function(){
 
-     // clear the elements out
-     var clearCanvas = function(){
-                  $("div#chart li").remove(); // clear out list items
-                  //$("h3").remove(); // clear out username heading
-                  //$("h4").remove(); // clear out heading "Repos"
-                  //$("#searchRepo").remove(); // clear out button
-                  d3.selectAll("svg").remove(); // clear out chart
-     };
+		 // clear the elements out
+		 var clearCanvas = function(){
+			$("div#chart li").remove(); // clear out list items
+			d3.selectAll("svg").remove(); // clear out chart
+		 };
 
 		// clear out previous results if needed
 		clearCanvas();
-
-        var searchterm = "tungnk1993";
-        var repo = "scrapy";
 		
 		// get languages
-		function getRepoLanguages(callback,repo){
-			$.get("https://api.github.com/repos/" + searchterm + "/" + repo + "/languages",
-				function(data, status){
-						console.log(status);
-						success: callback(data,status,repo);
+		function getRepoLanguages(callback){
+			$.getJSON('./data/languages.json', function(data, status) {   
+				//console.log(data);
+				console.log(status);
+				success: callback(data,status);
 			});
-			//d3.json("./data/language.json", function(data) {
-  			//	console.log(data[0]);
-			//});
 		};
 
 		// callback function to show languages
-		function showLangs(data, status, repo){
-
+		function showLangs(data, status){ 
 			// setup empty dataset array variable for d3
 			var dataset = [];
 
 			// loop through data object and append items to li
 			for (var key in data) {
-  			if (data.hasOwnProperty(key)) { // ensure it is key from data, not prototype being used
-  				// code to display language counts as list - not used at moment
-  				// $("#langDetails").append("<li>" + key + ": " + data[key] + "</li>");
-  				
-  				// push items into dataset array
-  				var item = new Object();
-					item.key = key;
-					item.value = data[key];
-					dataset.push(item);
-  			};
-  		};
+				if (data.hasOwnProperty(key)) { // ensure it is key from data, not prototype being used
+					// code to display language counts as list - not used at moment
+					$("#langDetails").append("<li>" + key + ": " + data[key] + "</li>");
+					
+					// push items into dataset array
+					var item = new Object();
+						item.key = key;
+						item.value = data[key];
+						dataset.push(item);
+				};
+			};
   		
         console.log(dataset); // for checking
   		
@@ -119,7 +109,7 @@ $(document).ready(function(){
 
 		// update the title
 		svg.select(".chartTitle")
-			.text(repo);
+			.text("scrapy");
 
 		// add tooltip
 		bars.on("mouseover",function(d){
@@ -164,7 +154,7 @@ $(document).ready(function(){
 
 		}; // end of the showLangs function
 
-        getRepoLanguages(showLangs, repo);
+        getRepoLanguages(showLangs);
          
 		// setup for the d3 chart
 		// basic SVG setup
